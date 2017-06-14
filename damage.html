@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Damage</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <form>
+        <div class="form-group">
+            <label>Weapon 1</label>
+            <div class="row">
+                <div class="col-xs-5">
+                    <input type="number" class="form-control" id="weapon1Min" placeholder="Min damage of the weapon">
+                </div>
+                <div class="col-xs-1">~</div>
+                <div class="col-xs-5">
+                    <input type="number" class="form-control" id="weapon1Max" placeholder="Max damage of the weapon">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Weapon 2</label>
+            <div class="row">
+                <div class="col-xs-5">
+                    <input type="number" class="form-control" id="weapon2Min" placeholder="Min damage of the weapon"
+                           value="0">
+                </div>
+                <div class="col-xs-1">~</div>
+                <div class="col-xs-5">
+                    <input type="number" class="form-control" id="weapon2Max" placeholder="Max damage of the weapon"
+                           value="0">
+                </div>
+            </div>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input id="dualWielding" type="checkbox" checked="checked"> Unchecked this if you use only weapon only
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="championPoints">Champion Points</label>
+            <input type="number" class="form-control" id="championPoints" value="0"
+                   placeholder="Your Champion Points, reset it and you can get the value">
+        </div>
+        <div class="form-group">
+            <label for="power">Power</label>
+            <input type="number" class="form-control" id="power"
+                   placeholder="Your power after reset the Champion Points">
+        </div>
+        <div class="form-group">
+            <label for="attackSpeed">Attack Speed</label>
+            <input type="number" class="form-control" id="attackSpeed"
+                   placeholder="Your Attack Speed after reset the Champion Points">
+        </div>
+        <div class="form-group">
+            <label for="criticalRating">Critical Rating</label>
+            <input type="number" class="form-control" id="criticalRating"
+                   placeholder="Your Critical Rating after reset the Champion Points">
+        </div>
+        <div class="form-group">
+            <label for="criticalDamage">Critical Damage</label>
+            <input type="number" class="form-control" id="criticalDamage"
+                   placeholder="Your Critical Damage after reset the Champion Points">
+        </div>
+        <div class="form-group">
+            <label for="damageIncrease">Damage Increase</label>
+            <input type="number" class="form-control" id="damageIncrease" value="1">
+            <span class="help-block">
+                Damage increase from glass canon (if at level 10, j=1.2 ; if at level 7, j = 1.17). If you're not using glass cannon, then j = 1.
+            </span>
+        </div>
+        <div class="form-group">
+            <label for="dps">DPS</label>
+            <input type="number" class="form-control" id="dps"
+                   placeholder="Will show the value after calculate" readonly>
+        </div>
+        <div class="form-group">
+            <label for="powerCP">Power Champion Point</label>
+            <input type="number" class="form-control" id="powerCP"
+                   placeholder="Will show the value after calculate" readonly>
+        </div>
+        <div class="form-group">
+            <label for="criticalRatingCP">Critical Rating Champion Point</label>
+            <input type="number" class="form-control" id="criticalRatingCP"
+                   placeholder="Will show the value after calculate" readonly>
+        </div>
+        <div class="form-group">
+            <label for="criticalDamageCP">Critical Damage Champion Point</label>
+            <input type="number" class="form-control" id="criticalDamageCP"
+                   placeholder="Will show the value after calculate" readonly>
+        </div>
+        <div class="form-group">
+            <label for="attackSpeedCP">Attack Speed Champion Point</label>
+            <input type="number" class="form-control" id="attackSpeedCP"
+                   placeholder="Will show the value after calculate" readonly>
+        </div>
+        <button type="button" id="calcBtn" class="btn btn-primary">Calculate</button>
+        <button type="reset" class="btn btn-default">Reset</button>
+    </form>
+
+    <script type="text/javascript">
+        jQuery(function ($) {
+//            $('#weapon1Min').val(1083);
+//            $('#weapon1Max').val(1184);
+//            $('#weapon2Min').val(964);
+//            $('#weapon2Max').val(1053);
+//            $('#championPoints').val(18);
+//            $('#power').val(905);
+//            $('#criticalRating').val(466);
+//            $('#attackSpeed').val(2.39);
+//            $('#criticalDamage').val(2.535);
+
+            $('#calcBtn').click(function () {
+                var weapon1Min = parseFloat($('#weapon1Min').val()),
+                        weapon1Max = parseFloat($('#weapon1Max').val()),
+                        weapon2Min = parseFloat($('#weapon2Min').val()),
+                        weapon2Max = parseFloat($('#weapon2Max').val()),
+                        dualWielding = $('#dualWielding').prop('checked'),
+
+                        cp = parseFloat($('#championPoints').val()),
+
+                        power = parseFloat($('#power').val()),
+                        attackSpeed = parseFloat($('#attackSpeed').val()),
+                        criticalRating = parseFloat($('#criticalRating').val()),
+                        criticalDamage = parseFloat($('#criticalDamage').val());
+
+                var hit = (weapon1Min + weapon1Max + weapon2Min + weapon2Max) / (dualWielding ? 2 : 1),
+                        a = (1 + power / 200) * hit / 2,
+                        b = hit / 160,
+                        c = attackSpeed,
+                        d = dualWielding ? 0.007 : 0.005,
+                        e = criticalRating,
+                        f = 3496,
+                        g = criticalDamage,
+                        h = 0.01,
+                        j = parseFloat($('#damageIncrease').val());
+
+
+                function calc(powerCP, attackSpeedCP, criticalRatingCP, criticalDamageCP) {
+                    return (a + b * powerCP) * (c + d * attackSpeedCP) * (1 + (e + 5 * criticalRatingCP) / (e + f + 5 * criticalRatingCP) * (g + h * criticalDamageCP)) * j;
+                }
+
+                var x, y, z, damageCP, dps, max = 0, cps;
+                for (x = 0; x <= cp; x++) {
+                    for (y = 0; y <= cp; y++) {
+                        for (z = 0; z <= cp; z++) {
+                            damageCP = cp - x - y - z;
+
+                            if (damageCP < 0) {
+                                break;
+                            }
+
+                            dps = calc(x, y, z, damageCP);
+                            if (dps > max) {
+                                max = dps;
+                                cps = [x, z, damageCP, y];
+                            }
+                        }
+                    }
+                }
+
+                if (cps) {
+                    cps.unshift(max.toFixed(2));
+                    $.each(['dps', 'powerCP', 'criticalRatingCP', 'criticalDamageCP', 'attackSpeedCP'], function (k, v) {
+                        $('#' + v).val(cps[k]);
+                    });
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
